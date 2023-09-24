@@ -1,10 +1,14 @@
 const canvas = document.getElementById("gameCanvas");
-const context = canvas.getContext("2d");
-
+const playButton = document.getElementById("play-button");
+const gameContainer = document.getElementById("game-container");
+const menuContainer = document.getElementById("menu-container");
 const backgroundCanvas = document.createElement("canvas");
+
+const context = canvas.getContext("2d");
+const backgroundContext = backgroundCanvas.getContext("2d");
+
 backgroundCanvas.width = canvas.width;
 backgroundCanvas.height = canvas.height;
-const backgroundContext = backgroundCanvas.getContext("2d");
 
 const playerImage = new Image();
 playerImage.src = "./assets/220space1.png";
@@ -22,6 +26,15 @@ context.imageSmoothingEnabled = false;
 
 let rightPressed = false;
 let leftPressed = false;
+
+function startGame() {
+    menuContainer.style.display = "none";
+    gameContainer.style.display = "block";
+
+    gameLoop();
+}
+
+playButton.addEventListener("click", startGame);
 
 function keyDownHandler(event) {
     if (event.key === "d" || event.key === "ArrowRight") {
@@ -274,8 +287,3 @@ document.addEventListener("keyup", keyUpHandler);
 canvas.addEventListener("click", () => {
     player.shoot();
 });
-
-playerImage.onload = () => {
-    console.log("image loaded");
-    gameLoop();
-};
