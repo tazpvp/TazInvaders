@@ -248,22 +248,6 @@ class Enemy {
     }
 }
 
-let enemies = [];
-
-spawnEnemies = () => {
-    let width = 240;
-    let height = 240;
-    
-    let amountToSpawn = canvas.width / width;
-    
-    for (let i = 1; i < amountToSpawn; i++) {
-        let enemy = new Enemy(i * 240, height + 150, 10, 5, 100, width, height);
-        enemies.push(enemy);
-    }
-}
-
-spawnEnemies();
-
 function gameLoop() {
     context.clearRect(0, 0, canvas.width, canvas.height);
 
