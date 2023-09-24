@@ -1,25 +1,28 @@
 const canvas = document.getElementById("gameCanvas");
 const context = canvas.getContext("2d");
 const playerImage = new Image();
-playerImage.src = "./assets/newspace1.png";
-context.imageSmoothingEnabled = false;
+playerImage.src = "./assets/220space1.png";
 
+const bulletImage = new Image();
+bulletImage.src = "./assets/bullet1.png";
+
+context.imageSmoothingEnabled = false;
 
 let rightPressed = false;
 let leftPressed = false;
 
 function keyDownHandler(event) {
-    if (event.key === "d") {
+    if (event.key === "d" || event.key === "ArrowRight") {
         rightPressed = true;
-    } else if (event.key === "a") {
+    } else if (event.key === "a" || event.key === "ArrowLeft") {
         leftPressed = true;
     }
 }
 
 function keyUpHandler(event) {
-    if (event.key === "d") {
+    if (event.key === "d" || event.key === "ArrowRight") {
         rightPressed = false;
-    } else if (event.key === "a") {
+    } else if (event.key === "a" || event.key === "ArrowLeft") {
         leftPressed = false;
     }
 }
@@ -34,17 +37,24 @@ class Player {
         this.height = magicNumber;
 
         this.x = canvas.width / 2 - (magicNumber / 2);
-        this.y = canvas.height - magicNumber;
+        this.y = canvas.height - magicNumber - 150;
+
+        this.canShootBullet = true;
 
         this.bullets = [];
     }
 
     shoot() {
-        const bulletX = this.x + this.width / 2 - 2.5;
-        const bulletY = this.y;
-    
-        const bullet = new Bullet(bulletX, bulletY, 5);
-        this.bullets.push(bullet);
+        if (this.canShootBullet) {
+            const bulletX = this.x + this.width / 2 - 2.5;
+            const bulletY = this.y;
+        
+            const bullet = new Bullet(bulletX, bulletY, 10);
+            this.bullets.push(bullet);
+            this.canShootBullet = false;
+
+            setTimeout(() => this.canShootBullet = true, 100);
+        }
     }
 
     updateBullets() {
@@ -81,20 +91,22 @@ const player = new Player();
 
 class Bullet {
     constructor(x, y, speed) {
-      this.x = x;
-      this.y = y;
-      this.speed = speed;
-      this.width = 5; 
-      this.height = 10;
+        let width = 50;
+        this.x = x - width / 2;
+        this.y = y;
+        this.speed = speed;
+        this.width = width; 
+        this.height = 100;
     }
   
     update() {
-      this.y -= this.speed;
+        this.y -= this.speed;
     }
   
     draw() {
-      context.fillStyle = "#f00";
-      context.fillRect(this.x, this.y, this.width, this.height);
+        context.fillStyle = "#f00";
+        context.drawImage(bulletImage, this.x, this.y, this.width, this.height);
+
     }
 }
 
