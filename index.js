@@ -27,12 +27,14 @@ function keyUpHandler(event) {
 class Player {
     constructor() {
         this.speed = 10;
-        
-        this.width = 25;
-        this.height = 25;
 
-        this.x = canvas.width / 2 - (25 / 2);
-        this.y = canvas.height - 25;
+        let magicNumber = 220;
+        
+        this.width = magicNumber;
+        this.height = magicNumber;
+
+        this.x = canvas.width / 2 - (magicNumber / 2);
+        this.y = canvas.height - magicNumber;
 
         this.bullets = [];
     }
