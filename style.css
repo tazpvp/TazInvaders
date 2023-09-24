@@ -51,7 +51,7 @@ h1 {
     font-size: 10vh;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: linear-gradient(to bottom, #ff1c1c, #ff1c1c, #000000);
-    -webkit-background-clip: text; /* Clip text to the background gradient */
-    color: transparent; /* Make the text transparent */
-    display: inline-block; /* Necessary for Webkit browsers */
+    -webkit-background-clip: text;
+    color: transparent;
+    display: inline-block;
 }
