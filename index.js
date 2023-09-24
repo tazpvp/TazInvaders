@@ -14,7 +14,8 @@ let leftPressed = false;
 function keyDownHandler(event) {
     if (event.key === "d" || event.key === "ArrowRight") {
         rightPressed = true;
-    } else if (event.key === "a" || event.key === "ArrowLeft") {
+    }
+    if (event.key === "a" || event.key === "ArrowLeft") {
         leftPressed = true;
     }
 }
@@ -22,7 +23,8 @@ function keyDownHandler(event) {
 function keyUpHandler(event) {
     if (event.key === "d" || event.key === "ArrowRight") {
         rightPressed = false;
-    } else if (event.key === "a" || event.key === "ArrowLeft") {
+    }
+    if (event.key === "a" || event.key === "ArrowLeft") {
         leftPressed = false;
     }
 }
@@ -42,18 +44,65 @@ class Player {
         this.canShootBullet = true;
 
         this.bullets = [];
+        this.recoilTime = 0;
     }
 
     shoot() {
         if (this.canShootBullet) {
             const bulletX = this.x + this.width / 2 - 2.5;
             const bulletY = this.y;
-        
+    
             const bullet = new Bullet(bulletX, bulletY, 10);
             this.bullets.push(bullet);
             this.canShootBullet = false;
-
-            setTimeout(() => this.canShootBullet = true, 100);
+    
+            const recoilDistance = -30; // Invert the recoil direction
+            const recoilDuration = 30; // Adjust the recoil duration in milliseconds
+    
+            const originalY = this.y; // Store the original y position
+            const recoilStart = Date.now(); // Store the start time of recoil animation
+    
+            // Easing function for recoil (ease-out)
+            const easeOut = (t) => 1 - Math.pow(1 - t, 3);
+    
+            // Easing function for return (ease-in)
+            const easeIn = (t) => t * t;
+    
+            // Start the recoil animation
+            const animateRecoil = () => {
+                const currentTime = Date.now();
+                const elapsedTime = currentTime - recoilStart;
+    
+                if (elapsedTime < recoilDuration) {
+                    // Calculate the current position using ease-out easing
+                    const progress = easeOut(elapsedTime / recoilDuration);
+                    this.y = originalY - progress * recoilDistance;
+                    requestAnimationFrame(animateRecoil);
+                } else {
+                    // Recoil animation completed, start return animation
+                    const returnDuration = 200; // Adjust the return animation duration
+                    const returnStart = Date.now();
+    
+                    const animateReturn = () => {
+                        const currentTime = Date.now();
+                        const elapsedTime = currentTime - returnStart;
+    
+                        if (elapsedTime < returnDuration) {
+                            // Calculate the current position using ease-in easing
+                            const progress = easeIn(elapsedTime / returnDuration);
+                            this.y = originalY - recoilDistance + progress * recoilDistance;
+                            requestAnimationFrame(animateReturn);
+                        } else {
+                            // Return animation completed, reset the player's position
+                            this.y = originalY;
+                            this.canShootBullet = true;
+                        }
+                    };
+    
+                    animateReturn(); // Start the return animation
+                }
+            };
+            animateRecoil(); // Start the recoil animation
         }
     }
 
@@ -81,7 +130,8 @@ class Player {
     update() {
         if (rightPressed && this.x < canvas.width - this.width) {
             this.x += this.speed;
-        } else if (leftPressed && this.x > 0) {
+        }
+        if (leftPressed && this.x > 0) {
             this.x -= this.speed;
         }
     }
