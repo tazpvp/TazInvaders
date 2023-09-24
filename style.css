@@ -5,19 +5,24 @@
 }
 
 #gameCanvas {
-    border: 2px solid #fdfdfd;
+    border: 1px solid #000000;
     background-color: #000000;
-    background-image: url("./assets/bg.png");
-    background-size: 1280px 800px;
+    background-image: url("./assets/newbg.png");
+    background-size: 100% 100%;
+    width: 65vw;
+    height: 80vh;
 }
 
 .cebter {
+    margin-top: 10vh;
     display: flex;
     justify-content: center;
-    margin-top: 5rem;
 }
 
 body {
     margin: 0;
-    background-color: black;
+    background-image: linear-gradient(to bottom, rgb(1, 12, 17), rgb(5, 0, 24));
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }

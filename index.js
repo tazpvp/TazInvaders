@@ -1,10 +1,22 @@
 const canvas = document.getElementById("gameCanvas");
 const context = canvas.getContext("2d");
+
+const backgroundCanvas = document.createElement("canvas");
+backgroundCanvas.width = canvas.width;
+backgroundCanvas.height = canvas.height;
+const backgroundContext = backgroundCanvas.getContext("2d");
+
 const playerImage = new Image();
 playerImage.src = "./assets/220space1.png";
 
 const bulletImage = new Image();
 bulletImage.src = "./assets/bullet1.png";
+
+const enemyImage = new Image();
+enemyImage.src = "./assets/220space2.png";
+
+const backgroundImg = new Image();
+backgroundImg.src = "./assets/smoke.png";
 
 context.imageSmoothingEnabled = false;
 
@@ -147,6 +159,7 @@ class Bullet {
         this.speed = speed;
         this.width = width; 
         this.height = 100;
+        this.damage = 50;
     }
   
     update() {
@@ -154,19 +167,104 @@ class Bullet {
     }
   
     draw() {
-        context.fillStyle = "#f00";
         context.drawImage(bulletImage, this.x, this.y, this.width, this.height);
-
     }
 }
+
+class Background {
+    constructor(image, speed, opacity) {
+        this.image = image;
+        this.speed = speed;
+        this.opacity = opacity;
+        this.y = 0;
+    }
+
+    update() {
+        this.y += this.speed;
+
+        if (this.y > canvas.height) {
+            this.y = 0;
+        }
+    }
+
+    draw() {
+        backgroundContext.clearRect(0, 0, backgroundCanvas.width, backgroundCanvas.height);
+        backgroundContext.globalAlpha = this.opacity;
+        backgroundContext.drawImage(this.image, 0, this.y, backgroundCanvas.width, backgroundCanvas.height);
+        backgroundContext.drawImage(this.image, 0, this.y - backgroundCanvas.height, backgroundCanvas.width, backgroundCanvas.height);
+        backgroundContext.globalAlpha = 0.2;
+        context.drawImage(backgroundCanvas, 0, 0); 
+    }
+}
+
+const background = new Background(backgroundImg, 1);
+
+class Enemy {
+    constructor(x, y, speed, attackSpeed, health, width, height) {
+        this.x = x - width / 2;
+        this.y = y;
+        this.speed = speed;
+        this.attackSpeed = attackSpeed;
+        this.width = width; 
+        this.height = height;
+        this.health = health;
+        this.bullets = [];
+    }
+
+    shoot() {
+        const bulletX = this.x + this.width / 2 - 2.5;
+        const bulletY = this.y;
+
+        const bullet = new Bullet(bulletX, bulletY, -5);
+        this.bullets.push(bullet);
+    }
+
+    updateBullets() {
+        for (let i = this.bullets.length - 1; i >= 0; i--) {
+          const bullet = this.bullets[i];
+          bullet.update();
+    
+          if (bullet.isOutOfBounds()) {
+            this.bullets.splice(i, 1);
+          }
+        }
+    }
+
+    draw() {
+        context.drawImage(enemyImage, this.x, this.y, this.width, this.height);
+    }
+}
+
+let enemies = [];
+
+spawnEnemies = () => {
+    let width = 240;
+    let height = 240;
+    
+    let amountToSpawn = canvas.width / width;
+    
+    for (let i = 1; i < amountToSpawn; i++) {
+        let enemy = new Enemy(i * 240, height + 150, 10, 5, 100, width, height);
+        enemies.push(enemy);
+    }
+}
+
+spawnEnemies();
 
 function gameLoop() {
     context.clearRect(0, 0, canvas.width, canvas.height);
 
+    background.update();
+    background.draw();
+    
     player.update();
     player.updateBullets();
     player.draw();
     player.drawBullets();
+
+    for (let enemy of enemies) {
+        enemy.draw();
+    }
 
     requestAnimationFrame(gameLoop);
 }
