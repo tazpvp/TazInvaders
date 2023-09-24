@@ -259,10 +259,6 @@ function gameLoop() {
     player.draw();
     player.drawBullets();
 
-    for (let enemy of enemies) {
-        enemy.draw();
-    }
-
     requestAnimationFrame(gameLoop);
 }
 
