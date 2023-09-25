@@ -9,10 +9,17 @@
 <body>
     <div class="menu-container" id="menu-container">
         <h1>TAZ INVADERS</h1>
-        <button id="play-button">Play</button>
+        <button class="menu-button" id="play-button">Play</button>
+        <button class="menu-button" id="upgrade-menu-button">Upgrade</button>
     </div>
 
-    <div id="game-container" style="display: none;">
+    <div class="menu-container" id="upgrade-container" style="display: none;">
+        <h2>SHOP</h2>
+        <button class="menu-button" id="upgrade-bullet-button">Bullets</button>
+        <button class="menu-button" id="menu-button">Menu</button>
+    </div>
+
+    <div class="menu-container" id="game-container" style="display: none;">
         <canvas id="gameCanvas" width="2560px" height="1600px"></canvas>
     </div>
 

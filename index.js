@@ -1,14 +1,25 @@
 const canvas = document.getElementById("gameCanvas");
-const playButton = document.getElementById("play-button");
-const gameContainer = document.getElementById("game-container");
-const menuContainer = document.getElementById("menu-container");
 const backgroundCanvas = document.createElement("canvas");
+const foregroundCanvas = document.createElement("canvas");
 
 const context = canvas.getContext("2d");
 const backgroundContext = backgroundCanvas.getContext("2d");
+const foregroundContext = foregroundCanvas.getContext("2d");
+
+const gameContainer = document.getElementById("game-container");
+const menuContainer = document.getElementById("menu-container");
+const upgradeContainer = document.getElementById("upgrade-container");
+
+const playButton = document.getElementById("play-button");
+const upgradeMenuButton = document.getElementById("upgrade-menu-button");
+const upgradeButton = document.getElementById("upgrade-bullet-button");
+const menuButton = document.getElementById("menu-button");
 
 backgroundCanvas.width = canvas.width;
 backgroundCanvas.height = canvas.height;
+
+foregroundCanvas.width = canvas.width;
+foregroundCanvas.height = canvas.height;
 
 const playerImage = new Image();
 playerImage.src = "./assets/220space1.png";
@@ -22,6 +33,9 @@ enemyImage.src = "./assets/220space2.png";
 const backgroundImg = new Image();
 backgroundImg.src = "./assets/smoke.png";
 
+const foregroundImg = new Image();
+foregroundImg.src = "./assets/newSmoke.png";
+
 context.imageSmoothingEnabled = false;
 
 let rightPressed = false;
@@ -29,12 +43,24 @@ let leftPressed = false;
 
 function startGame() {
     menuContainer.style.display = "none";
-    gameContainer.style.display = "block";
+    gameContainer.style.display = "flex";
 
     gameLoop();
 }
 
+function openUpgradeMenu() {
+    menuContainer.style.display = "none";
+    upgradeContainer.style.display = "flex";
+}
+
+function openMenu() {
+    menuContainer.style.display = "flex";
+    upgradeContainer.style.display = "none";
+}
+
 playButton.addEventListener("click", startGame);
+upgradeMenuButton.addEventListener("click", openUpgradeMenu);
+menuButton.addEventListener("click", openMenu);
 
 function keyDownHandler(event) {
     if (event.key === "d" || event.key === "ArrowRight") {
@@ -251,12 +277,40 @@ class Background {
         backgroundContext.globalAlpha = this.opacity;
         backgroundContext.drawImage(this.image, 0, this.y, backgroundCanvas.width, backgroundCanvas.height);
         backgroundContext.drawImage(this.image, 0, this.y - backgroundCanvas.height, backgroundCanvas.width, backgroundCanvas.height);
-        backgroundContext.globalAlpha = 0.2;
+        backgroundContext.globalAlpha = 0.3;
         context.drawImage(backgroundCanvas, 0, 0); 
     }
 }
 
-const background = new Background(backgroundImg, 1);
+const background = new Background(backgroundImg, 0.5);
+
+class Foreground {
+    constructor(image, speed, opacity) {
+        this.image = image;
+        this.speed = speed;
+        this.opacity = opacity;
+        this.y = 0;
+    }
+
+    update() {
+        this.y += this.speed;
+
+        if (this.y > canvas.height) {
+            this.y = 0;
+        }
+    }
+
+    draw() {
+        foregroundContext.clearRect(0, 0, foregroundCanvas.width, foregroundCanvas.height);
+        foregroundContext.globalAlpha = this.opacity;
+        foregroundContext.drawImage(this.image, 0, this.y, foregroundCanvas.width, foregroundCanvas.height);
+        foregroundContext.drawImage(this.image, 0, this.y - foregroundCanvas.height, foregroundCanvas.width, foregroundCanvas.height);
+        foregroundContext.globalAlpha = 0.07;
+        context.drawImage(foregroundCanvas, 0, 0); 
+    }
+}
+
+const foreground = new Foreground(foregroundImg, 5);
 
 class Enemy {
     constructor(x, y, speed, attackSpeed, health, width, height) {
@@ -304,6 +358,9 @@ function gameLoop() {
     player.updateBullets();
     player.draw();
     player.drawBullets();
+
+    foreground.update();
+    foreground.draw();
 
     requestAnimationFrame(gameLoop);
 }
